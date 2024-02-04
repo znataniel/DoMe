@@ -41,6 +41,10 @@ const homeCard = (function () {
     dueDate.textContent = format(todo.getDueDate(), "yyyy/MM/dd");
     priority.textContent = todo.getPriority().toUpperCase();
 
+    if (checkbox.checked) {
+      tdDiv.classList.add("strikethrough");
+    }
+
     tdDiv.appendChild(checkbox);
     tdDiv.appendChild(title);
     tdDiv.appendChild(desc);

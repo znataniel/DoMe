@@ -18,6 +18,11 @@ body {
 }
 
 aside {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2rem;
+
   background: greenyellow;
 }
 
@@ -30,6 +35,7 @@ h1.title {
 div.project-wrapper {
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 }
 
 #content {
@@ -37,13 +43,24 @@ div.project-wrapper {
   color: darkslategray;
 }
 
+.strikethrough {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.home-card {
+  margin: 1rem;
+  padding: 2rem;
+
+  background-color: antiquewhite;
+  border-radius: 0.5rem;
+}
+
 .home-card-title {
-  margin: 1rem 2rem;
+  margin: 1rem 0;
 }
 
 .td-div {
-  margin: auto 2rem;
-
   display: flex;
   align-items: center;
   gap: 2rem;
