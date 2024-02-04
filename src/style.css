@@ -36,3 +36,19 @@ div.project-wrapper {
   background-color: lightblue;
   color: darkslategray;
 }
+
+.home-card-title {
+  margin: 1rem 2rem;
+}
+
+.td-div {
+  margin: auto 2rem;
+
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.td-due-date {
+  margin-left: auto;
+}

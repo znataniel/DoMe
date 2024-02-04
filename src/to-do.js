@@ -7,22 +7,24 @@ export default function ToDo(
 ) {
   state = Boolean(state);
 
+  const priorities = ["low", "normal", "high"];
+
   const getState = () => state;
   const getTitle = () => title;
   const getDesc = () => desc;
   const getDueDate = () => dueDate;
-  const getPriority = () => priority;
+  const getPriority = () => priorities[priority];
 
   const setToggleState = () => {
     state = state ? false : true;
   };
 
   const setTitle = (newTitle) => {
-    title = String(newTitle);
+    title = newTitle.toString();
   };
 
   const setDesc = (newDesc) => {
-    desc = String(newDesc);
+    desc = newDesc.toString();
   };
 
   const setDueDate = (newDueDate) => {
