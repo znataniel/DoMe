@@ -45,6 +45,17 @@ const homeCard = (function () {
       tdDiv.classList.add("strikethrough");
     }
 
+    checkbox.addEventListener("change", () => {
+      if (checkbox.checked) {
+        tdDiv.classList.add("strikethrough");
+      } else {
+        tdDiv.classList.remove("strikethrough");
+      }
+      todo.setToggleState();
+
+      console.log(`${todo.getTitle()}: ${todo.getState()}`);
+    });
+
     tdDiv.appendChild(checkbox);
     tdDiv.appendChild(title);
     tdDiv.appendChild(desc);
