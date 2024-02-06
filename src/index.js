@@ -1,7 +1,7 @@
 import "./style.css";
 import ToDo from "./to-do.js";
 import Project from "./projects.js";
-import homeCard from "./home-dom.js";
+import { homeCard, projectTab } from "./content-dom";
 import sidebar from "./sidebar-dom.js";
 
 function loadDummyProjects() {
@@ -54,6 +54,7 @@ projectArr.forEach((proj) => {
   content.appendChild(homeCard.create(proj));
 });
 
+sidebar.activateHomeButton(document.querySelector("button.home"), projectArr);
 sidebar.createProjectButtons(projectArr).forEach((btn) => {
   projectList.appendChild(btn);
 });
