@@ -44,8 +44,17 @@ div.project-wrapper {
 }
 
 .strikethrough {
-  text-decoration: line-through;
+  position: relative;
   opacity: 0.5;
+}
+
+.strikethrough::before {
+  content: " ";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  border-bottom: 1px solid darkslategray;
+  width: 100%;
 }
 
 .home-card {
