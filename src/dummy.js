@@ -1,5 +1,4 @@
-import Project from "./projects";
-import ToDo from "./to-do";
+import { ToDo, Project } from "./data-types";
 
 export default function loadDummyProjects() {
   const proj = Project("General", new Array());

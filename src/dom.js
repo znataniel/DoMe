@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import { content, homeCard, projectTab } from "./content-dom";
 
 const content = (function () {
   const contentDiv = document.querySelector("div#content");
@@ -209,4 +208,4 @@ const forms = (function () {
   return { createTdForm };
 })();
 
-export default { sidebar, forms, content, homeCard, projectTab };
+export { sidebar, forms, content, homeCard, projectTab };

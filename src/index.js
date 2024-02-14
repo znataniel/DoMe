@@ -1,8 +1,6 @@
 import "./style.css";
 import loadDummyProjects from "./dummy";
-import { homeCard } from "./content-dom";
-import forms from "./forms-dom";
-import sidebar from "./sidebar-dom.js";
+import { sidebar, homeCard, forms } from "./dom";
 
 const content = document.querySelector("div#content");
 const addTdBtn = document.querySelector("button.add.to-do");

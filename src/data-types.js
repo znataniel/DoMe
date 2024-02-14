@@ -66,4 +66,4 @@ function Project(title, toDos) {
   return { getTitle, setTitle, getToDoArr, addToDo, removeToDo };
 }
 
-export default { ToDo, Project };
+export { ToDo, Project };
