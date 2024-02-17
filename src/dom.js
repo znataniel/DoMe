@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { ToDo } from "./data-types";
 
 const content = (function () {
   const contentDiv = document.querySelector("div#content");
@@ -31,7 +32,6 @@ const homeCard = (function () {
     project.getToDoArr().forEach((todo) => {
       toDoWrapper.appendChild(createToDoDiv(todo));
     });
-
     card.appendChild(projTitle);
     card.appendChild(toDoWrapper);
     return card;
@@ -61,51 +61,10 @@ const projectTab = (function () {
   return { createTitle, createToDoWrapper };
 })();
 
-const createToDoDiv = function (todo) {
-  const tdDiv = document.createElement("div");
-  tdDiv.classList.add("td-div");
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  const title = document.createElement("h3");
-  title.classList.add("td-title");
-  const desc = document.createElement("p");
-  desc.classList.add("td-desc");
-  const dueDate = document.createElement("p");
-  dueDate.classList.add("td-due-date");
-  const priority = document.createElement("p");
-  priority.classList.add("td-priority");
-
-  checkbox.checked = todo.getState();
-  title.textContent = todo.getTitle();
-  desc.textContent = todo.getDesc();
-  dueDate.textContent = format(todo.getDueDate(), "yyyy/MM/dd");
-  priority.textContent = todo.getPriority().toUpperCase();
-
-  if (checkbox.checked) {
-    tdDiv.classList.add("strikethrough");
-  }
-
-  checkbox.addEventListener("change", () => {
-    if (checkbox.checked) {
-      tdDiv.classList.add("strikethrough");
-    } else {
-      tdDiv.classList.remove("strikethrough");
-    }
-    todo.setToggleState();
-
-    console.log(`${todo.getTitle()}: ${todo.getState()}`);
-  });
-
-  tdDiv.appendChild(checkbox);
-  tdDiv.appendChild(title);
-  tdDiv.appendChild(desc);
-  tdDiv.appendChild(dueDate);
-  tdDiv.appendChild(priority);
-
-  return tdDiv;
-};
-
 const sidebar = (function () {
+  const addTdBtn = document.querySelector("button.add.to-do");
+  const formDiv = document.querySelector("div.form-wrapper");
+
   const activateHomeButton = function (hBtn, projectArr) {
     hBtn.addEventListener("click", () => {
       content.clear();
@@ -113,6 +72,25 @@ const sidebar = (function () {
         content.append(homeCard.create(proj));
       });
     });
+  };
+
+  const activateAddTdButton = function (projectArr) {
+    addTdBtn.addEventListener("click", () => {
+      if (!formDiv.firstChild) {
+        formDiv.appendChild(forms.createTdForm(projectArr));
+      } else {
+        while (formDiv.firstChild) {
+          formDiv.removeChild(formDiv.firstChild);
+        }
+      }
+    });
+  };
+
+  const clearTdForm = function () {
+    const formWrapper = document.querySelector("div.form-wrapper");
+    while (formWrapper.firstChild) {
+      formWrapper.removeChild(formWrapper.firstChild);
+    }
   };
 
   const createProjectButtons = function (projectArr) {
@@ -138,11 +116,16 @@ const sidebar = (function () {
     return projectButtons;
   };
 
-  return { activateHomeButton, createProjectButtons };
+  return {
+    activateHomeButton,
+    activateAddTdButton,
+    createProjectButtons,
+    clearTdForm,
+  };
 })();
 
 const forms = (function () {
-  const createTdForm = function () {
+  const createTdForm = function (projectArr) {
     const tdForm = document.createElement("form");
     const formElements = [];
 
@@ -197,7 +180,41 @@ const forms = (function () {
     });
     formElements.push(priorityInput);
 
-    const addBtn = document.createElement("button");
+    const projectLabel = document.createElement("label");
+    projectLabel.htmlFor = "form-project";
+    projectLabel.textContent = "Project";
+    formElements.push(projectLabel);
+    const projectInput = document.createElement("select");
+    projectInput.required = true;
+    projectInput.id = "form-project";
+    projectArr.forEach((proj) => {
+      const option = document.createElement("option");
+      option.value = projectArr.indexOf(proj);
+      option.textContent = proj.getTitle();
+
+      projectInput.appendChild(option);
+    });
+    formElements.push(projectInput);
+
+    const submitTd = document.createElement("button");
+    submitTd.type = "submit";
+    submitTd.textContent = "Add";
+    submitTd.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (tdForm.checkValidity()) {
+        const newTd = ToDo(
+          titleInput.value,
+          descInput.value,
+          new Date(dateInput.value),
+          priorityInput.selectedIndex,
+        );
+        projectArr[projectInput.value].addToDo(newTd);
+        sidebar.clearTdForm();
+      } else {
+        tdForm.reportValidity();
+      }
+    });
+    formElements.push(submitTd);
 
     formElements.forEach((element) => {
       tdForm.appendChild(element);
@@ -205,7 +222,46 @@ const forms = (function () {
 
     return tdForm;
   };
+
   return { createTdForm };
 })();
+
+const createToDoDiv = function (todo) {
+  const tdDiv = document.createElement("div");
+  tdDiv.classList.add("td-div");
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  const title = document.createElement("h3");
+  title.classList.add("td-title");
+  const desc = document.createElement("p");
+  desc.classList.add("td-desc");
+  const dueDate = document.createElement("p");
+  dueDate.classList.add("td-due-date");
+  const priority = document.createElement("p");
+  priority.classList.add("td-priority");
+
+  checkbox.checked = todo.getState();
+  title.textContent = todo.getTitle();
+  desc.textContent = todo.getDesc();
+  dueDate.textContent = format(todo.getDueDate(), "yyyy/MM/dd");
+  priority.textContent = todo.getPriority().toUpperCase();
+
+  if (checkbox.checked) {
+    tdDiv.classList.add("strikethrough");
+  }
+
+  checkbox.addEventListener("change", () => {
+    tdDiv.classList.toggle("strikethrough");
+    todo.setToggleState();
+  });
+
+  tdDiv.appendChild(checkbox);
+  tdDiv.appendChild(title);
+  tdDiv.appendChild(desc);
+  tdDiv.appendChild(dueDate);
+  tdDiv.appendChild(priority);
+
+  return tdDiv;
+};
 
 export { sidebar, forms, content, homeCard, projectTab };
