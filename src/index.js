@@ -13,7 +13,7 @@ projectArr.forEach((proj) => {
   content.append(homeCard.create(proj));
 });
 
-sidebar.activateHomeButton(document.querySelector("button.home"), projectArr);
+sidebar.activateHomeButton(projectArr);
 sidebar.activateAddTdButton(projectArr);
 sidebar.createProjectButtons(projectArr).forEach((btn) => {
   projectDiv.appendChild(btn);

@@ -21,6 +21,7 @@ const homeCard = (function () {
   const create = function (project) {
     const card = document.createElement("div");
     card.classList.add("home-card");
+    card.classList.add(project.getTitle());
 
     const projTitle = document.createElement("h2");
     projTitle.classList.add("home-card-title");
@@ -30,14 +31,19 @@ const homeCard = (function () {
     toDoWrapper.classList.add("home-card-td-wrapper");
 
     project.getToDoArr().forEach((todo) => {
-      toDoWrapper.appendChild(createToDoDiv(todo));
+      toDoWrapper.appendChild(createTdDiv(todo));
     });
     card.appendChild(projTitle);
     card.appendChild(toDoWrapper);
     return card;
   };
 
-  return { create };
+  const appendNewTd = function (projectTitle, Td) {
+    const card = document.querySelector("div.home-card." + projectTitle);
+    card.appendChild(createTdDiv(Td));
+  };
+
+  return { create, appendNewTd };
 })();
 
 const projectTab = (function () {
@@ -52,7 +58,7 @@ const projectTab = (function () {
     wrapper.classList.add("td-wrapper");
 
     project.getToDoArr().forEach((todo) => {
-      wrapper.appendChild(createToDoDiv(todo));
+      wrapper.appendChild(createTdDiv(todo));
     });
 
     return wrapper;
@@ -65,7 +71,8 @@ const sidebar = (function () {
   const addTdBtn = document.querySelector("button.add.to-do");
   const formDiv = document.querySelector("div.form-wrapper");
 
-  const activateHomeButton = function (hBtn, projectArr) {
+  const activateHomeButton = function (projectArr) {
+    const hBtn = document.querySelector("button.home");
     hBtn.addEventListener("click", () => {
       content.clear();
       projectArr.forEach((proj) => {
@@ -209,6 +216,7 @@ const forms = (function () {
           priorityInput.selectedIndex,
         );
         projectArr[projectInput.value].addToDo(newTd);
+        homeCard.appendNewTd(projectArr[projectInput.value].getTitle(), newTd);
         sidebar.clearTdForm();
       } else {
         tdForm.reportValidity();
@@ -226,7 +234,7 @@ const forms = (function () {
   return { createTdForm };
 })();
 
-const createToDoDiv = function (todo) {
+const createTdDiv = function (todo) {
   const tdDiv = document.createElement("div");
   tdDiv.classList.add("td-div");
   const checkbox = document.createElement("input");
