@@ -56,6 +56,7 @@ const projectTab = (function () {
   const createToDoWrapper = function (project) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("td-wrapper");
+    wrapper.classList.add(project.getTitle());
 
     project.getToDoArr().forEach((todo) => {
       wrapper.appendChild(createTdDiv(todo));
@@ -64,7 +65,12 @@ const projectTab = (function () {
     return wrapper;
   };
 
-  return { createTitle, createToDoWrapper };
+  const appendNewTd = function (projectTitle, Td) {
+    const wrapper = document.querySelector("div.td-wrapper." + projectTitle);
+    if (wrapper) wrapper.appendChild(createTdDiv(Td));
+  };
+
+  return { createTitle, createToDoWrapper, appendNewTd };
 })();
 
 const sidebar = (function () {
@@ -216,7 +222,17 @@ const forms = (function () {
           priorityInput.selectedIndex,
         );
         projectArr[projectInput.value].addToDo(newTd);
-        homeCard.appendNewTd(projectArr[projectInput.value].getTitle(), newTd);
+        if (document.querySelector(".home-card")) {
+          homeCard.appendNewTd(
+            projectArr[projectInput.value].getTitle(),
+            newTd,
+          );
+        } else {
+          projectTab.appendNewTd(
+            projectArr[projectInput.value].getTitle(),
+            newTd,
+          );
+        }
         sidebar.clearTdForm();
       } else {
         tdForm.reportValidity();
