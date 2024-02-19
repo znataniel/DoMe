@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { ToDo } from "./data-types";
+import { Project, ToDo } from "./data-types";
 
 const content = (function () {
   const contentDiv = document.querySelector("div#content");
@@ -74,20 +74,17 @@ const projectTab = (function () {
 })();
 
 const sidebar = (function () {
-  const addTdBtn = document.querySelector("button.add.to-do");
-  const formDiv = document.querySelector("div.form-wrapper");
-
   const activateHomeButton = function (projectArr) {
     const hBtn = document.querySelector("button.home");
     hBtn.addEventListener("click", () => {
       content.clear();
-      projectArr.forEach((proj) => {
-        content.append(homeCard.create(proj));
-      });
+      populateHome(projectArr);
     });
   };
 
   const activateAddTdButton = function (projectArr) {
+    const addTdBtn = document.querySelector("button.add.to-do");
+    const formDiv = document.querySelector("div.form-wrapper");
     addTdBtn.addEventListener("click", () => {
       if (!formDiv.firstChild) {
         formDiv.appendChild(forms.createTdForm(projectArr));
@@ -99,8 +96,46 @@ const sidebar = (function () {
     });
   };
 
+  const activateAddProjButton = function (projectArr) {
+    const addBtn = document.querySelector("button.add.proj");
+    const formDiv = document.querySelector("div.proj-form-wrapper");
+    addBtn.addEventListener("click", () => {
+      if (!formDiv.firstChild) {
+        formDiv.appendChild(forms.createProjForm(projectArr));
+      } else {
+        while (formDiv.firstChild) {
+          formDiv.removeChild(formDiv.firstChild);
+        }
+      }
+    });
+  };
+
+  const appendProject = function (proj) {
+    const projectDiv = document.querySelector(".project-wrapper");
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.classList.add("project-btn");
+    btn.textContent = proj.getTitle();
+
+    btn.addEventListener("click", () => {
+      content.clear();
+      content.append(projectTab.createTitle(proj));
+      content.append(projectTab.createToDoWrapper(proj));
+    });
+
+    projectDiv.appendChild(btn);
+  };
+
   const clearTdForm = function () {
     const formWrapper = document.querySelector("div.form-wrapper");
+    while (formWrapper.firstChild) {
+      formWrapper.removeChild(formWrapper.firstChild);
+    }
+  };
+
+  const clearProjForm = function () {
+    const formWrapper = document.querySelector("div.proj-form-wrapper");
     while (formWrapper.firstChild) {
       formWrapper.removeChild(formWrapper.firstChild);
     }
@@ -129,11 +164,29 @@ const sidebar = (function () {
     return projectButtons;
   };
 
+  const populateHome = function (projectArr) {
+    projectArr.forEach((proj) => {
+      content.append(homeCard.create(proj));
+    });
+  };
+
+  const populateProjectButtons = function (projectArr) {
+    const projectDiv = document.querySelector(".project-wrapper");
+    sidebar.createProjectButtons(projectArr).forEach((btn) => {
+      projectDiv.appendChild(btn);
+    });
+  };
+
   return {
     activateHomeButton,
     activateAddTdButton,
+    activateAddProjButton,
+    appendProject,
     createProjectButtons,
     clearTdForm,
+    clearProjForm,
+    populateHome,
+    populateProjectButtons,
   };
 })();
 
@@ -247,7 +300,38 @@ const forms = (function () {
     return tdForm;
   };
 
-  return { createTdForm };
+  const createProjForm = function (ProjectArr) {
+    const form = document.createElement("form");
+
+    const titleInput = document.createElement("input");
+    titleInput.required = true;
+    titleInput.id = "form-title";
+    titleInput.type = "text";
+    titleInput.placeholder = "Project Title";
+    [titleInput.minLenght, titleInput.maxLength] = [0, 24];
+
+    const submit = document.createElement("button");
+    submit.type = "submit";
+    submit.textContent = "Add";
+    submit.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (form.checkValidity()) {
+        const newProj = Project(titleInput.value, []);
+        ProjectArr.push(newProj);
+        sidebar.appendProject(newProj);
+        sidebar.clearProjForm();
+      } else {
+        form.reportValidity();
+      }
+    });
+
+    form.appendChild(titleInput);
+    form.appendChild(submit);
+
+    return form;
+  };
+
+  return { createTdForm, createProjForm };
 })();
 
 const createTdDiv = function (todo) {
